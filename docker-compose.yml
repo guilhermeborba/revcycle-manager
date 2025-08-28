@@ -7,9 +7,9 @@ services:
     container_name: revcycle_db
     restart: always
     environment:
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: J8!rX9kP2@zQ4sT7
-      POSTGRES_DB: revcycle_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
