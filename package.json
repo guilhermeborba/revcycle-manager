@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "revcycle-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",    
+    "lint": "eslint \"**/*.ts\" --fix --no-error-on-unmatched-pattern",
+    "format": "prettier --write \"**/*.{ts,json,md}\"",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^8.0.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.41.0"
+  }
+}
