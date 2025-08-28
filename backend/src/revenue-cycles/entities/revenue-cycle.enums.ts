@@ -1,0 +1,15 @@
+export enum Stage {
+  PRE_AUTH = 'PRE_AUTH',
+  ATTENDANCE = 'ATTENDANCE',
+  BILLING = 'BILLING',
+  ADJUDICATION = 'ADJUDICATION',
+  PAYMENT = 'PAYMENT',
+}
+
+export enum ClaimStatus {
+  OPEN = 'OPEN',
+  DENIED = 'DENIED',
+  APPROVED = 'APPROVED',
+  PAID = 'PAID',
+  CANCELLED = 'CANCELLED',
+}

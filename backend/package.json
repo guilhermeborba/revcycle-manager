@@ -8,13 +8,10 @@
   "license": "UNLICENSED",
   "scripts": {
     "typeorm": "dotenv -e .env -- typeorm-ts-node-commonjs -d typeorm.config.ts",
-
     "migration:show": "ts-node --transpile-only scripts/show-migrations.ts",
     "migration:run": "ts-node --transpile-only scripts/run-migrations.ts",
     "migration:revert": "ts-node --transpile-only scripts/revert-migration.ts",
     "migration:generate": "ts-node --transpile-only scripts/generate-migration.ts",
-
-
     "start": "nest start",
     "start:dev": "nest start --watch",
     "build": "nest build",
@@ -30,7 +27,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
-    "@nestjs/mapped-types": "*",
+    "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
