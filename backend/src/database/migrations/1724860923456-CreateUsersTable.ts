@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateUsersTable1724860923456 implements MigrationInterface {
   name = 'CreateUsersTable1724860923456';
@@ -16,7 +16,9 @@ export class CreateUsersTable1724860923456 implements MigrationInterface {
       )
     `);
 
-    await queryRunner.query(`CREATE INDEX IF NOT EXISTS "IDX_users_email" ON "users" ("email")`);
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_users_email" ON "users" ("email")`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

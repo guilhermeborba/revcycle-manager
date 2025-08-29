@@ -1,10 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { INestApplication} from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from '../src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import type { Repository } from 'typeorm';
 
 describe('Authentication Flow (e2e)', () => {
   let app: INestApplication;

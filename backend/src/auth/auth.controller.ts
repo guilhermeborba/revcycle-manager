@@ -1,38 +1,36 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-  Get,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Req, UseGuards, forwardRef } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { Request as ExpressRequest } from 'express';
+ import { CreateUserDto } from '../users/dto/create-user.dto';
+import type { Request } from 'express';
+ 
+const __keepCreateUserDtoAsValue = CreateUserDto;
 
-interface AuthenticatedRequest extends ExpressRequest {
-  user: {
-    userId: string;
-    email: string;
-  };
-}
+type JwtRequest = Request & {
+  user?: { userId: string | number; email: string };
+};
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) {}
 
-  @HttpCode(HttpStatus.OK)
+  @Post('register')
+  async register(@Body() dto: CreateUserDto) {
+    return this.authService.register(dto);
+  }
+
   @Post('login')
-  login(@Body() loginDto: CreateUserDto) {
-    return this.authService.login(loginDto.email, loginDto.password);
+  async login(@Body() body: { email: string; password: string }) {
+    const { email, password } = body;
+    return this.authService.login(email, password);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
-  getProfile(@Request() req: AuthenticatedRequest) {
-    return req.user;
+  getProfile(@Req() req: JwtRequest) {
+    return { user: req.user };
   }
 }
