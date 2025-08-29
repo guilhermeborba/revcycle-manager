@@ -1,14 +1,20 @@
-// backend/src/users/users.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Get, Inject, Param, forwardRef } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Get()
+  list() {
+    return this.usersService.findAll();
+  }
+
+  @Get(':id')
+  getById(@Param('id') id: string) {
+    return this.usersService.findOne(id);
   }
 }

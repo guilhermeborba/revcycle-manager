@@ -1,44 +1,45 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
-  IsNotEmpty,
   IsNumber,
   IsEnum,
   IsDateString,
   IsOptional,
   Min,
 } from 'class-validator';
-import { Stage, ClaimStatus } from '../entities/revenue-cycle.enums';
+import { ClaimStatus, Stage } from '../entities/revenue-cycle.enums';
 
 export class CreateRevenueCycleDto {
+  @ApiProperty({ example: 'PATIENT-002' })
   @IsString()
-  @IsNotEmpty()
   patientId!: string;
 
+  @ApiProperty({ example: 'Global Health Inc.' })
   @IsString()
-  @IsNotEmpty()
   payer!: string;
 
+  @ApiProperty({ example: 'PROC-54321' })
   @IsString()
-  @IsNotEmpty()
   procedureCode!: string;
 
-  @IsNumber({ maxDecimalPlaces: 2 })
+  @ApiProperty({ example: 250.75 })
+  @IsNumber()
   @Min(0)
   amount!: number;
 
+  @ApiProperty({ enum: Stage, example: Stage.PRE_AUTH })
   @IsEnum(Stage)
   stage!: Stage;
 
+  @ApiProperty({ enum: ClaimStatus, example: ClaimStatus.OPEN })
   @IsEnum(ClaimStatus)
   claimStatus!: ClaimStatus;
 
+  @ApiProperty({ example: '2025-10-15' })
   @IsDateString()
-  dueDate!: Date;
+  dueDate!: string;
 
-  @IsOptional()
-  @IsDateString()
-  paidDate?: Date;
-
+  @ApiProperty({ example: 'Pre-authorization request.', required: false })
   @IsOptional()
   @IsString()
   notes?: string;

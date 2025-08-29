@@ -1,15 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  forwardRef,
+} from '@nestjs/common';
 import { RevenueCyclesService } from './revenue-cycles.service';
+import { AuthGuard } from '@nestjs/passport'; 
 import { CreateRevenueCycleDto } from './dto/create-revenue-cycle.dto';
 import { UpdateRevenueCycleDto } from './dto/update-revenue-cycle.dto';
+ 
+const __keepCreateAsValue = CreateRevenueCycleDto; 
+const __keepUpdateAsValue = UpdateRevenueCycleDto;
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('revenue-cycles')
 export class RevenueCyclesController {
-  constructor(private readonly revenueCyclesService: RevenueCyclesService) {}
+  constructor(
+    @Inject(forwardRef(() => RevenueCyclesService))
+    private readonly revenueCyclesService: RevenueCyclesService,
+  ) {}
 
   @Post()
-  create(@Body() createRevenueCycleDto: CreateRevenueCycleDto) {
-    return this.revenueCyclesService.create(createRevenueCycleDto);
+  create(@Body() dto: CreateRevenueCycleDto) {
+    return this.revenueCyclesService.create(dto);
   }
 
   @Get()
@@ -18,17 +37,17 @@ export class RevenueCyclesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.revenueCyclesService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.revenueCyclesService.findOne(Number(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRevenueCycleDto: UpdateRevenueCycleDto) {
-    return this.revenueCyclesService.update(+id, updateRevenueCycleDto);
+  update(@Param('id') id: number, @Body() dto: UpdateRevenueCycleDto) {
+    return this.revenueCyclesService.update(Number(id), dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.revenueCyclesService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.revenueCyclesService.remove(Number(id));
   }
 }
