@@ -21,7 +21,7 @@ function getErrorMessage(err: unknown, fallback = 'Falha no login. Verifique sua
   return fallback;
 }
 
-export default function Login() {
+export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -41,8 +41,8 @@ export default function Login() {
 
     try {
       setLoading(true);
-      await login(email, password); // sua função do AuthContext
-      navigate('/dashboard', { replace: true }); // ✅ redireciona pro dashboard
+      await login(email, password); 
+      navigate('/dashboard', { replace: true }); 
     } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {
