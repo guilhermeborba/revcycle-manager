@@ -1,42 +1,57 @@
-import type { TestingModule } from '@nestjs/testing';
+import 'reflect-metadata';
+import type { Request } from 'express';
 import { Test } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import type { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  let service: jest.Mocked<AuthService>;
+
+  const mockAuthService = {
+    register: jest.fn((dto) => ({
+      id: Date.now(),
+      ...dto,
+    })),
+    login: jest.fn().mockResolvedValue({ access_token: 'mockToken' }),
+  };
+
+  const mockUsersService = {
+    findOne: jest.fn((id) => ({
+      id,
+      name: 'Test User',
+      email: 'test@example.com',
+    })),
+  };
 
   beforeEach(async () => {
-    const serviceMock: Partial<jest.Mocked<AuthService>> = {
-      login: jest.fn().mockResolvedValue({
-        access_token: 'signed.jwt.token',
-      }),
-    };
-
-    const module: TestingModule = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: serviceMock }],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: UsersService, useValue: mockUsersService },
+      ],
     }).compile();
 
-    controller = module.get(AuthController);
-    service = module.get(AuthService);
+    controller = module.get<AuthController>(AuthController);
   });
-
-  afterEach(() => jest.clearAllMocks());
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('login: should delegate to AuthService.login(email, password)', async () => {
-    const res = await controller.login({ email: 'tester@example.com', password: 'Secret123!' } as CreateUserDto);
+  it('should get a user profile', async () => {
+    const req = {
+      user: { userId: '123' },
+    } as unknown as Request & { user: { userId: string } };
 
-    expect(service.login).toHaveBeenCalledWith(
-      'tester@example.com',
-      'Secret123!',
-    );
-    expect(res).toEqual({ access_token: 'signed.jwt.token' });
+    const result = await controller.getProfile(req);
+
+    expect(result).toEqual({
+      id: '123',
+      name: 'Test User',
+      email: 'test@example.com',
+    });
+    expect(mockUsersService.findOne).toHaveBeenCalledWith('123');
   });
 });

@@ -7,19 +7,19 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private readonly repo: Repository<User>,
   ) {}
 
   findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return this.repo.find();
   }
 
   findOne(id: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+    return this.repo.findOne({ where: { id } });
   }
 
   findOneByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    return this.repo.findOne({ where: { email } });
   }
 
   async create(data: { name: string; email: string; password: string }): Promise<User> {
@@ -28,6 +28,6 @@ export class UsersService {
   }
 
   async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
+    await this.repo.delete(id);
   }
 }
