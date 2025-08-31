@@ -1,12 +1,21 @@
-import { Controller, Post, Body, Get, Req, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Req,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
-import { AuthGuard } from '@nestjs/passport';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 import { Request } from 'express';
 
 type AuthenticatedRequest = Request & {
-  user?: { userId: string };
+  user: { userId: string };
 };
 
 @Controller('auth')
@@ -17,6 +26,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))
   async register(@Body() dto: CreateUserDto) {
     return this.authService.register(dto);
   }
@@ -26,11 +36,9 @@ export class AuthController {
     return this.authService.login(dto.email, dto.password);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Req() req: AuthenticatedRequest) {
-    if (req.user) {
-      return this.usersService.findOne(req.user.userId);
-    }
+    return this.usersService.findOne(req.user.userId);
   }
 }

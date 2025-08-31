@@ -1,3 +1,4 @@
+// eslint.config.js (flat config)
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import jestPlugin from 'eslint-plugin-jest';
@@ -31,6 +32,27 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
+      '@typescript-eslint/consistent-type-imports': [
+        'warn',
+        {
+          prefer: 'type-imports',
+          fixStyle: 'separate-type-imports',
+          disallowTypeAnnotations: false,
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['**/*.controller.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-imports': 'off',
+    },
+  },
+
+  {
+    files: ['src/auth/jwt.strategy.ts'],
+    rules: {
       '@typescript-eslint/consistent-type-imports': 'off',
     },
   },
@@ -56,6 +78,7 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
+      // Facilita mocks no Jest
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',

@@ -22,9 +22,9 @@ export class UsersService {
     return this.repo.findOne({ where: { email } });
   }
 
-  async create(data: { name: string; email: string; password: string }) {
-    const user = this.repo.create(data);
-    return this.repo.save(user);
+  async create(data: { name: string; email: string; password: string }): Promise<User> {
+    const user = this.usersRepository.create(data);
+    return this.usersRepository.save(user);
   }
 
   async remove(id: string): Promise<void> {
