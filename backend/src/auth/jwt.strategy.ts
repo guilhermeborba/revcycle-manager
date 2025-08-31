@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt'; 
 import { ConfigService } from '@nestjs/config';
+
+type JwtPayload = { sub: string; email: string; name?: string };
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -9,22 +11,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: cfg.get<string>('JWT_SECRET') || 'dev-secret',
+      secretOrKey: cfg.get<string>('JWT_SECRET', 'dev_secret'),
     });
-
-     
-    console.log(
-      '[JWT] strategy ready (secret len =',
-      (cfg.get<string>('JWT_SECRET') || 'dev-secret').length,
-      ')',
-    );
   }
 
-  async validate(payload: { sub: string; email: string }) {
-     
-    console.log('[JWT] validate payload =', payload);
-    return { userId: payload.sub, email: payload.email };
+  validate(payload: JwtPayload) {
+    return { userId: payload.sub, email: payload.email, name: payload.name };
   }
 }
- 
-const __keepConfigServiceAsValue = ConfigService;

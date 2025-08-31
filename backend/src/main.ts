@@ -1,38 +1,48 @@
-import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { setupSwagger } from './swagger';
-import { json, urlencoded } from 'express';
-import type { Request, Response, NextFunction } from 'express';
+import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(json({ limit: '2mb' }));
-  app.use(urlencoded({ extended: true }));
+  const PORT = Number(process.env.PORT ?? 3000);
 
-  app.use((req: Request, _res: Response, next: NextFunction) => {
-    if (req.path === '/auth/register' || req.path === '/auth/login') {
-       
-      console.log('[DEBUG pre-pipe]', req.path, 'body =', req.body);
-    }
-    next();
-  });
+  const CORS_ORIGINS =
+    process.env.CORS_ORIGINS ??
+    process.env.FRONTEND_URL ??
+    '';
+
+  const ORIGINS = CORS_ORIGINS.split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const CORS_CREDENTIALS = String(process.env.CORS_CREDENTIALS ?? 'false') === 'true';
+  const CORS_METHODS = process.env.CORS_METHODS ?? 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS';
+  const CORS_ALLOWED_HEADERS = process.env.CORS_ALLOWED_HEADERS ?? 'Content-Type,Authorization';
+
+  const corsOptions: CorsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (!origin) return callback(null, true); // curl/Postman
+      if (ORIGINS.length === 0 || ORIGINS.includes(origin)) return callback(null, true);
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: CORS_CREDENTIALS,
+    methods: CORS_METHODS,
+    allowedHeaders: CORS_ALLOWED_HEADERS,
+  };
+
+  app.enableCors(corsOptions);
 
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      validationError: { target: false, value: true },
     }),
   );
 
-  app.useGlobalFilters(new HttpExceptionFilter());
-  setupSwagger(app);
-
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(PORT);
+   
 }
-void bootstrap();
+bootstrap();
