@@ -1,15 +1,28 @@
-import { Controller, Post, Body, Get, Req, UsePipes, ValidationPipe, Inject, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Req,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
- 
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { Request } from 'express';
+
+type AuthenticatedRequest = Request & {
+  user: { userId: string };
+};
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject(AuthService) private readonly authService: AuthService,
-    @Inject(UsersService) private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('register')
@@ -25,7 +38,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getProfile(@Req() req: { user: { userId: string } }) {
+  async getProfile(@Req() req: AuthenticatedRequest) {
     return this.usersService.findOne(req.user.userId);
   }
 }

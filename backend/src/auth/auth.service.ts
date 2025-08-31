@@ -31,6 +31,7 @@ export class AuthService {
     const ok = await bcrypt.compare(pass, user.password);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
+    // payload compatível com JwtStrategy (usa `sub`)
     const payload = { sub: user.id, email: user.email, name: user.name };
     return { access_token: this.jwtService.sign(payload) };
   }
