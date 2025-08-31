@@ -27,7 +27,7 @@ export class AuthService {
     const ok = await bcrypt.compare(pass, user.password);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { email: user.email, sub: user.id, name: user.name };
     return { access_token: this.jwtService.sign(payload) };
   }
 
@@ -36,11 +36,19 @@ export class AuthService {
     if (exists) throw new ConflictException('Email already registered');
 
     const hashed = await bcrypt.hash(dto.password, 10);
-    const user = await this.usersService.create({ email: dto.email, password: hashed });
 
-    const payload = { sub: user.id, email: user.email };
+    const name = dto.name?.trim() || dto.email.split('@')[0];
+
+    const user = await this.usersService.create({
+      name,
+      email: dto.email,
+      password: hashed,
+    });
+
+    const payload = { email: user.email, sub: user.id, name: user.name };
     return {
       id: user.id,
+      name: user.name,
       email: user.email,
       access_token: this.jwtService.sign(payload),
     };

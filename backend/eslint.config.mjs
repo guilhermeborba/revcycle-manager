@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 import jestPlugin from 'eslint-plugin-jest';
 import globals from 'globals';
 
-const ignores = ['dist', 'coverage', 'node_modules'];
+const ignores = ['dist', 'coverage', 'node_modules', 'typeorm.config.js', 'typeorm.config.ts'];
 
 export default [
   { ignores },
@@ -31,10 +31,7 @@ export default [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
-      '@typescript-eslint/consistent-type-imports': [
-        'warn',
-        { prefer: 'type-imports' },
-      ],
+      '@typescript-eslint/consistent-type-imports': 'off',
     },
   },
 
