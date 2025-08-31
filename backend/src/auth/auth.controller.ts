@@ -1,20 +1,19 @@
-import { Body, Controller, Get, Inject, Post, Req, UseGuards, forwardRef } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UseGuards } from '@nestjs/common';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { AuthGuard } from '@nestjs/passport';
- import { CreateUserDto } from '../users/dto/create-user.dto';
-import type { Request } from 'express';
- 
-const __keepCreateUserDtoAsValue = CreateUserDto;
+import { Request } from 'express';
 
-type JwtRequest = Request & {
-  user?: { userId: string | number; email: string };
+type AuthenticatedRequest = Request & {
+  user?: { userId: string };
 };
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Post('register')
@@ -23,14 +22,15 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    const { email, password } = body;
-    return this.authService.login(email, password);
+  async login(@Body() dto: { email: string; password: string }) {
+    return this.authService.login(dto.email, dto.password);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('profile')
-  getProfile(@Req() req: JwtRequest) {
-    return { user: req.user };
+  @Get('me')
+  async getProfile(@Req() req: AuthenticatedRequest) {
+    if (req.user) {
+      return this.usersService.findOne(req.user.userId);
+    }
   }
 }
