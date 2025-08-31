@@ -16,7 +16,7 @@ function getErrorMessage(err: unknown, fallback = "Falha no cadastro. Verifique 
   return fallback;
 }
 
-export default function Register() {
+export function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
