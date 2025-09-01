@@ -19,7 +19,6 @@ describe('RevenueCyclesService', () => {
     delete: jest.Mock;
   };
 
-  // Função helper para criar entidades mock completas
   const createMockRevenueCycle = (overrides: Partial<RevenueCycle> = {}): RevenueCycle => ({
     id: 1,
     patientId: 'PATIENT-001',

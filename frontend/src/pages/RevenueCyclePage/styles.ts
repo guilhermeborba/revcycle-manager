@@ -91,3 +91,22 @@ export const StyledLink = styled(Link)`
     filter: brightness(0.95);
   }
 `;
+
+export const StatusButton = styled(BaseButton)`
+  width: 100%;
+  background: ${({ theme }) => theme.colors.gray100};
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid ${({ theme }) => theme.colors.gray300};
+  text-align: center;
+  line-height: 25px;
+
+  span {
+    top: 4px;
+    left: 4px;
+    position:relative;    
+  }
+  &:hover {
+    filter: brightness(0.95);
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;

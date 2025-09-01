@@ -27,3 +27,13 @@ export async function updateRevenueCycle(
 export async function deleteRevenueCycle(id: number): Promise<void> {
   await api.delete(`/revenue-cycles/${id}`);
 }
+
+export async function advanceStage(id: number): Promise<RevenueCycle> {
+  const { data } = await api.patch(`/revenue-cycles/${id}/advance-stage`);
+  return data;
+}
+
+export async function advanceStatus(id: number): Promise<RevenueCycle> {
+  const { data } = await api.patch(`/revenue-cycles/${id}/advance-status`);
+  return data;
+}

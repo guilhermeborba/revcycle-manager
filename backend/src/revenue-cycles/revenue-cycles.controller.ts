@@ -44,6 +44,16 @@ export class RevenueCyclesController {
     return this.revenueCyclesService.update(id, updateRevenueCycleDto);
   }
 
+  @Patch(':id/advance-stage')
+  advanceStage(@Param('id', ParseIntPipe) id: number) {
+    return this.revenueCyclesService.advanceStage(id);
+  }
+
+  @Patch(':id/advance-status')
+  advanceStatus(@Param('id', ParseIntPipe) id: number) {
+    return this.revenueCyclesService.advanceStatus(id);
+  }  
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseIntPipe) id: number) {
