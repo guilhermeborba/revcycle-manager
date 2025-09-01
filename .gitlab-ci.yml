@@ -1,0 +1,57 @@
+image: node:20-alpine
+
+stages:
+  - install
+  - lint
+  - test
+  - build
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - npm install
+
+lint:
+  stage: lint
+  script:
+    - npm run lint -w backend
+    - npm run lint -w frontend
+  needs:
+    - install_dependencies
+
+test_backend:
+  stage: test
+  script:
+    - npm run test -w backend
+  needs:
+    - install_dependencies
+
+test_frontend:
+  stage: test
+  script:
+    - npm run test -w frontend
+  needs:
+    - install_dependencies
+
+build_images:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker info
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - echo "Construindo imagens Docker..."
+    - docker compose build --build-arg POSTGRES_USER=$POSTGRES_USER --build-arg POSTGRES_PASSWORD=$POSTGRES_PASSWORD --build-arg POSTGRES_DB=$POSTGRES_DB
+    - echo "Build concluído. Simulação de push..."
+  needs:
+    - test_backend
+    - test_frontend
