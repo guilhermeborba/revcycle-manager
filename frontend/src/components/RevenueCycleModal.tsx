@@ -9,6 +9,22 @@ import type {
 const stageOptions: Stage[] = ['PRE_AUTH', 'ATTENDANCE', 'BILLING', 'ADJUDICATION', 'PAYMENT'];
 const claimStatusOptions: ClaimStatus[] = ['OPEN', 'DENIED', 'APPROVED', 'PAID', 'CANCELLED'];
 
+const stageLabels: Record<Stage, string> = {
+  PRE_AUTH: 'Pré-Autorização',
+  ATTENDANCE: 'Atendimento',
+  BILLING: 'Faturamento',
+  ADJUDICATION: 'Análise/Glosa',
+  PAYMENT: 'Pagamento',
+};
+
+const claimStatusLabels: Record<ClaimStatus, string> = {
+  OPEN: 'Aberta',
+  DENIED: 'Negada',
+  APPROVED: 'Aprovada',
+  PAID: 'Paga',
+  CANCELLED: 'Cancelada',
+};
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -39,7 +55,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
         <h2>{isEditMode ? 'Editar Ciclo de Receita' : 'Novo Ciclo de Receita'}</h2>
         <form onSubmit={handleSubmit}>
           <div style={styles.formGrid}>
-            
             <div style={styles.formGroup}>
               <label htmlFor="patientId">ID do Paciente</label>
               <input
@@ -50,7 +65,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               />
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="payer">Pagador</label>
               <input
@@ -61,7 +75,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               />
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="procedureCode">Código do Procedimento</label>
               <input
@@ -72,7 +85,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               />
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="amount">Valor</label>
               <input
@@ -84,7 +96,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               />
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="stage">Fase</label>
               <select
@@ -95,10 +106,9 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               >
                 <option value="" disabled>Selecione uma fase</option>
-                {stageOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                {stageOptions.map(opt => <option key={opt} value={opt}>{stageLabels[opt]}</option>)}
               </select>
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="claimStatus">Status da Cobrança</label>
               <select
@@ -109,10 +119,9 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               >
                 <option value="" disabled>Selecione um status</option>
-                {claimStatusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                {claimStatusOptions.map(opt => <option key={opt} value={opt}>{claimStatusLabels[opt]}</option>)}
               </select>
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="dueDate">Data de Vencimento</label>
               <input
@@ -124,7 +133,6 @@ export function RevenueCycleModal({ isOpen, onClose, onSave, initialData, isLoad
                 required
               />
             </div>
-
             <div style={styles.formGroup}>
               <label htmlFor="paidDate">Data de Pagamento</label>
               <input
