@@ -1,9 +1,8 @@
-// frontend/src/pages/Login.tsx
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import axios, { type AxiosError } from 'axios';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom'; 
 import { AuthContainer } from './AuthStyles';
 
 function getErrorMessage(err: unknown, fallback = 'Falha no login. Verifique suas credenciais.') {
@@ -24,11 +23,14 @@ function getErrorMessage(err: unknown, fallback = 'Falha no login. Verifique sua
 export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); 
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  
+  const from = location.state?.from?.pathname || '/revenue-cycles';
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,7 +44,7 @@ export function Login() {
     try {
       setLoading(true);
       await login(email, password); 
-      navigate('/dashboard', { replace: true }); 
+      navigate(from, { replace: true }); 
     } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {
@@ -52,7 +54,7 @@ export function Login() {
 
   return (
     <AuthContainer>
-      <h1>Entrar</h1>
+      <h1>Gestão do Ciclo de Receita</h1>
       <form onSubmit={onSubmit}>
         <div>
           <label htmlFor="email">E-mail</label>

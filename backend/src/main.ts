@@ -23,7 +23,7 @@ async function bootstrap() {
 
   const corsOptions: CorsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin) return callback(null, true); // curl/Postman
+      if (!origin) return callback(null, true); 
       if (ORIGINS.length === 0 || ORIGINS.includes(origin)) return callback(null, true);
       return callback(new Error(`CORS blocked for origin: ${origin}`));
     },
@@ -39,6 +39,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 

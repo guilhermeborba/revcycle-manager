@@ -8,7 +8,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: ${({ theme }) => theme.colors.background};
+    background: ${({ theme }) => theme.colors.gray100};
     color: ${({ theme }) => theme.colors.text};
     -webkit-font-smoothing: antialiased;
     font-family: 'Roboto', sans-serif;

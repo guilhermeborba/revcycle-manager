@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import * as revenueCycleService from '../services/revenueCycle.service';
-import type { RevenueCycle, CreateRevenueCyclePayload } from '../types/revenueCycle';
-import { RevenueCycleModal } from '../components/RevenueCycleModal';
+import * as revenueCycleService from '../../services/revenueCycle.service';
+import type { RevenueCycle, CreateRevenueCyclePayload } from '../../types/revenueCycle';
+import { RevenueCycleModal } from '../../components/RevenueCycleModal';
+import * as S from './styles';
 
-export function RevenueCyclePage() {
+export default function RevenueCyclePage() {
   const [cycles, setCycles] = useState<RevenueCycle[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +41,7 @@ export function RevenueCyclePage() {
     try {
       setLoading(true);
 
-      const payload: Partial<CreateRevenueCyclePayload> = {
+      const payload = {
         patientId: data.patientId,
         payer: data.payer,
         procedureCode: data.procedureCode,
@@ -48,18 +49,16 @@ export function RevenueCyclePage() {
         stage: data.stage,
         claimStatus: data.claimStatus,
         dueDate: data.dueDate,
-        notes: data.notes,
+        notes: data.notes || null,
+        paidDate: data.paidDate || null,
       };
-      
-      if (data.paidDate) {
-        payload.paidDate = data.paidDate;
-      }
 
       if (editingCycle?.id) {
         await revenueCycleService.updateRevenueCycle(editingCycle.id, payload);
       } else {
         await revenueCycleService.createRevenueCycle(payload as CreateRevenueCyclePayload);
       }
+
       setIsModalOpen(false);
       loadCycles();
     } catch (error) {
@@ -86,40 +85,48 @@ export function RevenueCyclePage() {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <h1>Gestão do Ciclo de Receita</h1>
-      <button onClick={handleOpenCreateModal} style={{ marginBottom: '16px', padding: '10px 16px' }}>
-        Novo Ciclo
-      </button>
+    <S.Container>
+      <S.Header>
+        <S.PrimaryButton onClick={handleOpenCreateModal}>
+          Novo Ciclo
+        </S.PrimaryButton>
+      </S.Header>
+
 
       {loading && cycles.length === 0 ? (
         <p>Carregando...</p>
       ) : (
-        <table>
+        <S.Table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Paciente</th>
-              <th>Pagador</th>
-              <th>Status</th>
-              <th>Ações</th>
+              <S.Th>ID</S.Th>
+              <S.Th>Paciente</S.Th>
+              <S.Th>Pagador</S.Th>
+              <S.Th>Status</S.Th>
+              <S.Th>Ações</S.Th>
             </tr>
           </thead>
           <tbody>
             {cycles.map((cycle) => (
               <tr key={cycle.id}>
-                <td>{cycle.id}</td>
-                <td>{cycle.patientId}</td>
-                <td>{cycle.payer}</td>
-                <td>{cycle.claimStatus}</td>
-                <td>
-                  <button onClick={() => handleOpenEditModal(cycle)}>Editar</button>
-                  <button onClick={() => handleDelete(cycle.id)}>Excluir</button>
-                </td>
+                <S.Td>{cycle.id}</S.Td>
+                <S.Td>{cycle.patientId}</S.Td>
+                <S.Td>{cycle.payer}</S.Td>
+                <S.Td>{cycle.claimStatus}</S.Td>
+                <S.Td>
+                  <S.ActionsContainer>
+                    <S.EditButton onClick={() => handleOpenEditModal(cycle)}>
+                      Editar
+                    </S.EditButton>
+                    <S.DeleteButton onClick={() => handleDelete(cycle.id)}>
+                      Excluir
+                    </S.DeleteButton>
+                  </S.ActionsContainer>
+                </S.Td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </S.Table>
       )}
       
       <RevenueCycleModal
@@ -129,6 +136,6 @@ export function RevenueCyclePage() {
         initialData={editingCycle}
         isLoading={loading}
       />
-    </div>
+    </S.Container>
   );
 }

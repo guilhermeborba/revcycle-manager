@@ -1,34 +1,29 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Inject,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
   UseGuards,
-  forwardRef,
+  ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { RevenueCyclesService } from './revenue-cycles.service';
-import { AuthGuard } from '@nestjs/passport'; 
 import { CreateRevenueCycleDto } from './dto/create-revenue-cycle.dto';
 import { UpdateRevenueCycleDto } from './dto/update-revenue-cycle.dto';
- 
-const __keepCreateAsValue = CreateRevenueCycleDto; 
-const __keepUpdateAsValue = UpdateRevenueCycleDto;
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('revenue-cycles')
+@UseGuards(AuthGuard('jwt'))
 export class RevenueCyclesController {
-  constructor(
-    @Inject(forwardRef(() => RevenueCyclesService))
-    private readonly revenueCyclesService: RevenueCyclesService,
-  ) {}
+  constructor(private readonly revenueCyclesService: RevenueCyclesService) {}
 
   @Post()
-  create(@Body() dto: CreateRevenueCycleDto) {
-    return this.revenueCyclesService.create(dto);
+  create(@Body() createRevenueCycleDto: CreateRevenueCycleDto) {
+    return this.revenueCyclesService.create(createRevenueCycleDto);
   }
 
   @Get()
@@ -37,17 +32,21 @@ export class RevenueCyclesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.revenueCyclesService.findOne(Number(id));
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.revenueCyclesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: UpdateRevenueCycleDto) {
-    return this.revenueCyclesService.update(Number(id), dto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRevenueCycleDto: UpdateRevenueCycleDto,
+  ) {
+    return this.revenueCyclesService.update(id, updateRevenueCycleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.revenueCyclesService.remove(Number(id));
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.revenueCyclesService.remove(id);
   }
 }
