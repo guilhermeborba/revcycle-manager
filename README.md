@@ -1,131 +1,94 @@
-# Desafio Técnico: Gestão do Ciclo de Receita Hospitalar
+# Desafio Técnico – Gestão do Ciclo de Receita Hospitalar
 
-## 📖 Visão Geral
+Este projeto é uma aplicação full-stack completa para gerenciar as etapas do Ciclo de Receita Hospitalar, desde a pré-autorização até o pagamento final.
 
-Este projeto é uma aplicação full-stack projetada para gerenciar as etapas do **Ciclo de Receita Hospitalar**. A solução permite cadastrar, visualizar e acompanhar a jornada financeira de um atendimento, desde a pré-autorização do convênio até o pagamento final.
+A solução permite o cadastro e login de usuários, e o gerenciamento (CRUD - Create, Read, Update, Delete) de todos os ciclos de receita através de uma interface web segura e reativa.
 
-O fluxo do ciclo de receita implementado inclui as seguintes etapas:
+## 🚀 Stack de Tecnologias
 
-1.  **Pré-autorização**: Validações de elegibilidade e cobertura do convênio.
-2.  **Atendimento**: Execução do procedimento médico.
-3.  **Faturamento/Codificação**: Geração da conta hospitalar com os códigos (TUSS/CBHPM) e anexos.
-4.  **Glosa/Adjudicação**: Análise da conta pelo pagador, com possíveis ajustes e recursos.
-5.  **Pagamento**: Liquidação financeira e baixa da conta.
+A aplicação foi construída utilizando um ecossistema moderno, robusto e escalável.
 
------
+* **Backend:**
+    * **Framework:** NestJS (TypeScript)
+    * **Banco de Dados:** PostgreSQL
+    * **ORM:** TypeORM (com sistema de Migrations)
+    * **Autenticação:** JWT com Passport.js (Guards, Strategy)
+    * **Validação:** `class-validator` / `class-transformer`
 
-## 🚀 Tecnologias Utilizadas
+* **Frontend:**
+    * **Biblioteca:** React (TypeScript) com Vite
+    * **Roteamento:** React Router
+    * **Estilização:** Styled Components
+    * **Cliente HTTP:** Axios (com Interceptors para JWT)
+    * **Gerenciamento de Estado:** React Context API
 
-Este projeto foi construído utilizando um stack moderno, escalável e robusto.
+* **Testes:**
+    * **Backend:** Jest & Supertest (Testes E2E)
+    * **Frontend:** Vitest & React Testing Library (Testes Unitários de Componentes)
 
-  - **Backend**: **FastAPI** (Python) ou NesJS (Typescript)
-      - **ORM**: SQLAlchemy com Alembic para migrações.
-      - **Validação**: Pydantic.
-      - **Autenticação**: JWT (JSON Web Tokens).
-  - **Frontend**: **React**
-      - **Gerenciamento de Estado**: Context API.
-      - **Estilização**: Styled-Components.
-      - **Roteamento**: React Router.
-  - **Banco de Dados**: **PostgreSQL**.
-  - **Infraestrutura & DevOps**:
-      - **Containerização**: Docker & Docker Compose.
-      - **CI/CD**: GitLab CI.
-      - **Cloud Provider**: AWS (ECR para registro de imagens e ECS para deploy).
+* **DevOps & Infraestrutura:**
+    * **Containerização:** Docker & Docker Compose
+    * **Servidor Web (Frontend):** NGINX
+    * **CI/CD:** GitLab CI
 
------
+## 📋 Pré-requisitos
 
-## ✨ Funcionalidades
+Para executar este projeto, você precisará ter as seguintes ferramentas instaladas:
 
-  - ✅ **Autenticação de Usuários**: Sistema seguro de registro e login com JWT.
-  - ✅ **CRUD Completo**: Crie, leia, atualize e remova registros do ciclo de receita.
-  - ✅ **Rotas Protegidas**: Acesso apenas para usuários autenticados nas rotas principais.
-  - ✅ **Interface Intuitiva**: Formulários claros para login, registro e gerenciamento dos ciclos.
-  - ✅ **Documentação de API**: Geração automática de documentação interativa com Swagger (OpenAPI).
-  - ✅ **Ambiente Containerizado**: Facilidade para rodar o ambiente de desenvolvimento com um único comando.
+* [Docker](https://www.docker.com/products/docker-desktop/)
+* [Docker Compose](https://docs.docker.com/compose/) (geralmente já vem com o Docker Desktop)
+* [Node.js](https://nodejs.org/) (para interagir com o `npm`)
+* [Git](https://git-scm.com/)
 
------
+## ⚙️ Instruções de Instalação e Execução
 
-## 🏗️ Estrutura do projeto desejável
+Siga os passos abaixo para rodar a aplicação completa localmente.
 
-```
-/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── db/
-│   │   └── models/
-│   ├── migrations/
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── contexts/
-│   │   ├── pages/
-│   │   └── services/
-│   ├── Dockerfile
-│   └── package.json
-│
-├── .gitlab-ci.yml
-├── docker-compose.yml
-└── README.md
-```
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/guilhermeborba/revcycle-manager.git](https://github.com/guilhermeborba/revcycle-manager.git)
+    cd revcycle-manager
+    ```
 
------
+2.  **Configure as Variáveis de Ambiente:**
+    Existem dois arquivos de exemplo `.env.example` que precisam ser configurados.
 
-## 🗄️ Modelo da Entidade `RevenueCycle`
+    * **Para o Docker Compose:**
+        ```bash
+        # Na raiz do projeto
+        cp .env.example .env
+        ```
+    * **Para o Backend:**
+        ```bash
+        # Navegue para a pasta do backend
+        cd backend
+        cp .env.example .env
+        # Preencha os segredos JWT no arquivo backend/.env
+        cd ..
+        ```
 
-| Campo         | Tipo de Dado                                          | Descrição                                 |
-| :------------ | :---------------------------------------------------- | :---------------------------------------- |
-| `id`          | `Integer` (PK)                                        | Identificador único.                      |
-| `patientId`   | `String`                                              | ID do paciente.                           |
-| `payer`       | `String`                                              | Nome do convênio/pagador.                 |
-| `procedureCode` | `String`                                            | Código do procedimento (TUSS/CBHPM).      |
-| `amount`      | `Numeric`                                             | Valor do procedimento.                    |
-| `stage`       | `Enum(PRE_AUTH, ATTENDANCE, BILLING, ADJUDICATION, PAYMENT)` | Etapa atual do ciclo.                     |
-| `claimStatus` | `Enum(OPEN, DENIED, APPROVED, PAID, CANCELLED)`       | Status da conta/fatura.                   |
-| `dueDate`     | `Date`                                                | Data de vencimento do pagamento.          |
-| `paidDate`    | `Date` (Nullable)                                     | Data em que o pagamento foi efetuado.     |
-| `notes`       | `Text` (Nullable)                                     | Observações adicionais.                   |
-| `createdAt`   | `DateTime`                                            | Data de criação do registro.              |
-| `updatedAt`   | `DateTime`                                            | Data da última atualização.               |
+3.  **Suba a Aplicação com Docker Compose:**
+    Este comando irá construir as imagens do frontend e backend e iniciar todos os três containers (frontend, backend, banco de dados).
 
------
+    ```bash
+    docker compose up --build
+    ```
 
-## 📦 Entrega do Projeto
+4.  **Acesse a Aplicação:**
+    * **Frontend:** [http://localhost:5173](http://localhost:5173)
+    * **Backend API:** [http://localhost:3000](http://localhost:3000)
 
-Para finalizar o desafio, siga as instruções abaixo.
+## 🗺️ Estrutura da API (Endpoints Principais)
 
-### Opções de Envio
+Todos os endpoints, exceto `/auth/register` e `/auth/login`, são protegidos e exigem um Bearer Token JWT.
 
-Escolha **uma** das seguintes formas para enviar seu projeto:
-
-1.  **Repositório Git (Recomendado):**
-
-      - Faça o upload do seu código para um repositório no GitHub ou GitLab.
-      - Se o repositório for privado, por favor, adicione o usuário `joao.marcus@a3data.com.br` como colaborador.
-      - Envie o link do repositório por e-mail.
-
-2.  **Arquivo Compactado (.zip):**
-
-      - Compacte a pasta raiz do projeto em um único arquivo `.zip`.
-      - **Importante:** Certifique-se de excluir a pasta `node_modules` e outros artefatos de build para manter o arquivo leve.
-      - Anexe o arquivo `.zip` no e-mail.
-
-### Checklist Final
-
-Antes de enviar, por favor, verifique se o seu projeto atende aos seguintes critérios:
-
-  - [ ] O código-fonte completo (backend, frontend, Docker, etc.) está incluído.
-  - [ ] O arquivo `README.md` está preenchido e claro.
-  - [ ] Os arquivos `.env.example` estão presentes e corretos.
-  - [ ] O projeto inicia sem erros com o comando `docker-compose up --build`.
-  - [ ] O fluxo de ponta a ponta (registro de usuário, login e operações CRUD do ciclo de receita) está funcionando através da interface do frontend.
-  - [ ] O arquivo de pipeline `.gitlab-ci.yml` está presente na raiz do projeto.
-
------
-
-Boa sorte\!
+| Método | Endpoint                    | Descrição                              |
+| :----- | :-------------------------- | :------------------------------------- |
+| `POST` | `/auth/register`            | Registra um novo usuário.              |
+| `POST` | `/auth/login`               | Autentica um usuário e retorna um JWT. |
+| `GET`  | `/auth/me`                  | Retorna os dados do usuário logado.    |
+| `POST` | `/revenue-cycles`           | Cria um novo ciclo de receita.         |
+| `GET`  | `/revenue-cycles`           | Lista todos os ciclos de receita.      |
+| `GET`  | `/revenue-cycles/:id`       | Busca um ciclo de receita por ID.      |
+| `PATCH`| `/revenue-cycles/:id`       | Atualiza um ciclo de receita por ID.   |
+| `DELETE`| `/revenue-cycles/:id`     | Deleta um ciclo de receita por ID.     |
