@@ -27,4 +27,20 @@ export type RevenueCycle = {
   updatedAt: string;
 };
 
+export const stageLabels: Record<Stage, string> = {
+  PRE_AUTH: 'Pré-Autorização',
+  ATTENDANCE: 'Atendimento',
+  BILLING: 'Faturamento',
+  ADJUDICATION: 'Análise/Glosa',
+  PAYMENT: 'Pagamento',
+};
+
+export const claimStatusLabels: Record<ClaimStatus, string> = {
+  OPEN: 'Aberta',
+  DENIED: 'Negada',
+  APPROVED: 'Aprovada',
+  PAID: 'Paga',
+  CANCELLED: 'Cancelada',
+};
+
 export type CreateRevenueCyclePayload = Omit<RevenueCycle, 'id' | 'createdAt' | 'updatedAt'>;

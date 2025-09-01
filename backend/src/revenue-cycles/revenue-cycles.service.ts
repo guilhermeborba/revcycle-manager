@@ -4,6 +4,10 @@ import type { Repository } from 'typeorm';
 import { RevenueCycle } from './entities/revenue-cycle.entity';
 import type { CreateRevenueCycleDto } from './dto/create-revenue-cycle.dto';
 import type { UpdateRevenueCycleDto } from './dto/update-revenue-cycle.dto';
+import { Stage, ClaimStatus } from './entities/revenue-cycle.enums';
+
+const stageOrder: Stage[] = [Stage.PRE_AUTH, Stage.ATTENDANCE, Stage.BILLING, Stage.ADJUDICATION, Stage.PAYMENT];
+const claimStatusOrder: ClaimStatus[] = [ClaimStatus.OPEN, ClaimStatus.APPROVED, ClaimStatus.PAID, ClaimStatus.DENIED, ClaimStatus.CANCELLED];
 
 @Injectable()
 export class RevenueCyclesService {
@@ -18,7 +22,11 @@ export class RevenueCyclesService {
   }
 
   findAll() {
-    return this.revenueCycleRepository.find();
+    return this.revenueCycleRepository.find({
+      order: {
+        id: 'ASC',
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -48,4 +56,25 @@ export class RevenueCyclesService {
     await this.revenueCycleRepository.delete(id);
     return { deleted: true };
   }
+
+ async advanceStage(id: number): Promise<RevenueCycle> {
+    const cycle = await this.findOne(id);
+    const currentIndex = stageOrder.indexOf(cycle.stage);
+
+    if (currentIndex < stageOrder.length - 1) {
+      cycle.stage = stageOrder[currentIndex + 1];
+    }
+    
+    return this.revenueCycleRepository.save(cycle);
+  }
+
+  async advanceStatus(id: number): Promise<RevenueCycle> {
+    const cycle = await this.findOne(id);
+    const currentIndex = claimStatusOrder.indexOf(cycle.claimStatus);
+
+    const nextIndex = (currentIndex + 1) % claimStatusOrder.length;
+    cycle.claimStatus = claimStatusOrder[nextIndex];
+    
+    return this.revenueCycleRepository.save(cycle);
+  } 
 }

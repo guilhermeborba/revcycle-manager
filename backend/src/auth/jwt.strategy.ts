@@ -15,11 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
 
     const secret = cfg.get<string>('JWT_SECRET') || 'dev_secret';
-    console.log('[JWT] strategy ready (secret len =', secret.length, ')');
   }
 
   async validate(payload: JwtPayload) {
-    console.log('[JWT] validate payload =', payload);
     return { userId: payload.sub, email: payload.email, name: payload.name };
   }
 }
